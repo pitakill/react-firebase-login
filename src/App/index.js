@@ -13,15 +13,17 @@ import {
 } from 'Constants';
 
 import Aux from 'Components/Aux';
-import Button from 'Components/Button';
+import Button from 'react-toolbox/lib/button/Button';
 import Name from 'Components/Name';
 
-import HTTP from 'Services/HTTP';
+//import HTTP from 'Services/HTTP';
 
 type AppState = {
-  button: {
-    label: string,
-    onClick: Function
+  button?: {
+    label?: string,
+    onClick?: Function,
+    primary?: boolean,
+    raised?: boolean
   },
   user?: string
 };
@@ -59,47 +61,40 @@ const DEBUG = ENVIRONMENT === 'development';
 initializeApp(config);
 const provider = new auth.FacebookAuthProvider();
 
-let http;
+//let http;
 
-export default class App extends React.PureComponent<{}, AppState> {
-  constructor(): void {
-    super();
-
-    (this:any).setToken = this.setToken.bind(this);
-    (this:any).handleLogin = this.handleLogin.bind(this);
-    (this:any).handleLogout = this.handleLogout.bind(this);
-    (this:any).setUser = this.setUser.bind(this);
-
-    this.state = {
-      button: {
-        label: 'login',
-        onClick: this.handleLogin
-      },
-      user: undefined
-    };
-  }
+export default class App extends React.Component<{}, AppState> {
+  state: AppState = {
+    button: {
+      label: 'login',
+      onClick: this.handleLogin.bind(this),
+      primary: true,
+      raised: true
+    },
+    user: undefined
+  };
 
   componentDidMount(): void {
     auth().onAuthStateChanged(user => {
       if (user) {
         this.setUser(user);
-        this.setToken();
+        //this.setToken();
       }
     })
   }
 
-  async setToken(): Promise<*> {
-    try {
-      const Authorization = await auth().currentUser.getIdToken();
-      DEBUG && debug(Authorization);
-      http = new HTTP('http://dev.api.culturacolectiva.com', {Authorization});
+  //async setToken(): Promise<*> {
+    //try {
+      //const Authorization = await auth().currentUser.getIdToken();
+      //DEBUG && debug(Authorization);
+      //http = new HTTP('http://dev.api.culturacolectiva.com', {Authorization});
 
-      const test = await http.get('/');
-      DEBUG && debug(test);
-    } catch (e) {
-      error(e);
-    }
-  }
+      //const test = await http.get('/');
+      //DEBUG && debug(test);
+    //} catch (e) {
+      //error(e);
+    //}
+  //}
 
   async handleLogin(): Promise<*> {
     try {
@@ -114,12 +109,17 @@ export default class App extends React.PureComponent<{}, AppState> {
   async handleLogout(): Promise<*> {
     try {
       await auth().signOut();
-      this.setState({
-        user: '',
-        button: {
-          label: 'login',
-          onClick: this.handleLogin
-        }
+      this.setState(prevState => {
+        const button = Object.assign(
+          {},
+          prevState.button,
+          {
+            label: 'login',
+            onClick: this.handleLogin.bind(this)
+          }
+        );
+
+        return Object.assign(prevState, {user: ''}, {button});
       });
     } catch (e) {
       error(e);
@@ -129,12 +129,18 @@ export default class App extends React.PureComponent<{}, AppState> {
   setUser(firebaseUser: FirebaseUser): void {
     DEBUG && debug(firebaseUser);
     const {displayName: user} = firebaseUser;
-    this.setState({
-      user,
-      button: {
-        label: 'logout',
-        onClick: this.handleLogout
-      }
+
+    this.setState(prevState => {
+      const button = Object.assign(
+        {},
+        prevState.button,
+        {
+          label: 'logout',
+          onClick: this.handleLogout.bind(this)
+        }
+      );
+
+      return Object.assign(prevState, {user}, {button});
     });
   }
 
