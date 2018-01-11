@@ -6,17 +6,25 @@ import {
 } from 'firebase';
 
 import './styles';
-
 import {
-  ENVIRONMENT,
   FIREBASE_CONFIG as config
 } from 'Constants';
+import {
+  debug,
+  DEBUG,
+  error
+} from 'Helpers';
 
 import Aux from 'Components/Aux';
 import Button from 'react-toolbox/lib/button/Button';
 import Name from 'Components/Name';
 
 //import HTTP from 'Services/HTTP';
+
+type AppProps = {
+  setUser: Function,
+  user: string
+};
 
 type AppState = {
   button?: {
@@ -25,7 +33,6 @@ type AppState = {
     primary?: boolean,
     raised?: boolean
   },
-  user?: string
 };
 
 type FirebaseUser = {
@@ -51,19 +58,12 @@ type FirebaseUser = {
   uid: string
 };
 
-const {
-  debug,
-  error
-} = console;
-
-const DEBUG = ENVIRONMENT === 'development';
-
 initializeApp(config);
 const provider = new auth.FacebookAuthProvider();
 
 //let http;
 
-export default class App extends React.Component<{}, AppState> {
+export default class App extends React.Component<AppProps, AppState> {
   state: AppState = {
     button: {
       label: 'login',
@@ -109,6 +109,7 @@ export default class App extends React.Component<{}, AppState> {
   async handleLogout(): Promise<*> {
     try {
       await auth().signOut();
+      this.props.setUser(null);
       this.setState(prevState => {
         const button = Object.assign(
           {},
@@ -119,7 +120,7 @@ export default class App extends React.Component<{}, AppState> {
           }
         );
 
-        return Object.assign(prevState, {user: ''}, {button});
+        return Object.assign(prevState, {button});
       });
     } catch (e) {
       error(e);
@@ -129,6 +130,8 @@ export default class App extends React.Component<{}, AppState> {
   setUser(firebaseUser: FirebaseUser): void {
     DEBUG && debug(firebaseUser);
     const {displayName: user} = firebaseUser;
+
+    this.props.setUser(user);
 
     this.setState(prevState => {
       const button = Object.assign(
@@ -140,15 +143,13 @@ export default class App extends React.Component<{}, AppState> {
         }
       );
 
-      return Object.assign(prevState, {user}, {button});
+      return Object.assign(prevState, {button});
     });
   }
 
   render(): React.Element<*> {
-    const {
-      button,
-      user: name
-    } = this.state;
+    const {button} = this.state;
+    const {user: name} = this.props;
 
     return (
       <Aux>
