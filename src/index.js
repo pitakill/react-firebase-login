@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import {render} from 'react-dom';
 import App from './App';
 import Chip from 'react-toolbox/lib/chip/Chip';
@@ -25,11 +25,11 @@ type WrapperProps = {
 }
 
 class WrapperWithoutRedux extends React.Component<WrapperProps, void> {
-  componentWillMount() {
+  componentWillMount(): void {
     this.props.actions.getInitialState();
   }
 
-  render() {
+  render(): React.Element<'div'> {
     const {
       actions: {
         setUser
@@ -46,14 +46,12 @@ class WrapperWithoutRedux extends React.Component<WrapperProps, void> {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    ...state.getInitialState,
-    ...state.handleUser
-  }
-};
+const mapStateToProps = (state: Object): Object => ({
+  ...state.getInitialState,
+  ...state.handleUser
+});
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: Object): Object => ({
   actions: bindActionCreators(actions, dispatch)
 });
 

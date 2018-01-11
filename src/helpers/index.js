@@ -1,3 +1,4 @@
+// @flow
 import {ENVIRONMENT} from 'Constants';
 
 const {
@@ -6,5 +7,5 @@ const {
 } = console;
 
 export {debug};
-export const DEBUG = ENVIRONMENT === 'development';
+export const DEBUG: boolean = ENVIRONMENT === 'development';
 export {error};

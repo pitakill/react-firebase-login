@@ -14,7 +14,6 @@ import {
   DEBUG,
   error
 } from 'Helpers';
-
 import Aux from 'Components/Aux';
 import Button from 'react-toolbox/lib/button/Button';
 import Name from 'Components/Name';
@@ -96,7 +95,7 @@ export default class App extends React.Component<AppProps, AppState> {
     //}
   //}
 
-  async handleLogin(): Promise<*> {
+  async handleLogin(): Promise<fetch> {
     try {
       const {user} = await auth().signInWithPopup(provider);
       this.setUser(user);
@@ -106,7 +105,7 @@ export default class App extends React.Component<AppProps, AppState> {
     }
   }
 
-  async handleLogout(): Promise<*> {
+  async handleLogout(): Promise<fetch> {
     try {
       await auth().signOut();
       this.props.setUser(null);
@@ -147,7 +146,7 @@ export default class App extends React.Component<AppProps, AppState> {
     });
   }
 
-  render(): React.Element<*> {
+  render(): React.Element<typeof Aux> {
     const {button} = this.state;
     const {user: name} = this.props;
 
