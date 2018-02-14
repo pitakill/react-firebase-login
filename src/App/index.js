@@ -89,16 +89,16 @@ export default class App extends React.PureComponent<{}, AppState> {
   }
 
   async setToken(): Promise<*> {
-    try {
-      const Authorization = await auth().currentUser.getIdToken();
-      DEBUG && debug(Authorization);
-      http = new HTTP('http://dev.api.culturacolectiva.com', {Authorization});
+    //try {
+      //const Authorization = await auth().currentUser.getIdToken();
+      //DEBUG && debug(Authorization);
+      //http = new HTTP('http://dev.api.culturacolectiva.com', {Authorization});
 
-      const test = await http.get('/');
-      DEBUG && debug(test);
-    } catch (e) {
-      error(e);
-    }
+      //const test = await http.get('/');
+      //DEBUG && debug(test);
+    //} catch (e) {
+      //error(e);
+    //}
   }
 
   async handleLogin(): Promise<*> {
